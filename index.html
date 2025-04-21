@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
@@ -9,59 +9,84 @@
     <style>
         body {
             background-color: #000000;
-            /* Latar belakang hitam */
             color: #ffffff;
-            /* Teks putih */
         }
 
         h2 {
             color: #007BFF;
-            /* Teks biru cerah */
         }
 
         .form-control {
             border-radius: 5px;
             border: 1px solid #007BFF;
-            /* Border biru */
         }
 
         .form-control:focus {
             border-color: #0056b3;
-            /* Border biru tua saat fokus */
             box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-            /* Efek fokus */
         }
 
         .btn-primary {
             background-color: #007BFF;
-            /* Latar belakang tombol biru */
             border: none;
         }
 
         .btn-primary:hover {
             background-color: #0056b3;
-            /* Latar belakang tombol biru tua saat hover */
         }
 
         .alert {
             background-color: #dc3545;
-            /* Latar belakang merah untuk alert */
             color: white;
-            /* Teks putih untuk alert */
             border-radius: 5px;
+            animation: fadeIn 0.5s ease, shake 0.3s ease;
         }
 
         .result-box {
             background-color: #1c1c1c;
-            /* Latar belakang hasil */
             border-radius: 5px;
             padding: 15px;
             margin-top: 10px;
+            animation: fadeIn 0.5s ease;
         }
 
         footer {
             color: #007BFF;
-            /* Teks biru cerah di footer */
+        }
+
+        /* Animasi */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shake {
+            0% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            50% {
+                transform: translateX(5px);
+            }
+
+            75% {
+                transform: translateX(-5px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
         }
     </style>
 </head>
@@ -73,14 +98,15 @@
                 <h2 class="text-center">Perhitungan Diskon</h2>
                 <form id="discount-form" class="border rounded bg-dark p-4">
                     <label class="form-label">Harga Barang (Rp)</label>
-                    <input type="number" id="harga" class="form-control" step="0.01" placeholder="Masukan Harga Barang" autocomplete="off" min="0" required>
+                    <input type="number" id="harga" class="form-control" step="0.01" placeholder="Masukan Harga Barang" autocomplete="off" min="0">
+
                     <label class="form-label">Diskon (%)</label>
-                    <input type="text" id="diskon" maxlength="3" class="form-control" step="0.01" placeholder="Masukan Diskon (1%-100%)" autocomplete="off" min="0" required>
+                    <input type="text" id="diskon" maxlength="3" class="form-control" placeholder="Masukan Diskon (1%-100%)" autocomplete="off">
 
                     <button type="submit" class="btn btn-primary w-100 mt-2">Hitung Harga Barang Setelah Diskon</button>
                 </form>
 
-                <div id="result-container"></div>
+                <div id="result-container" class="mt-3"></div>
             </div>
         </div>
     </div>
@@ -88,65 +114,61 @@
     <footer class="text-center mt-4">
         <p>&copy; Perhitungan Diskon | Aril | 12 RPL-A</p>
     </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
-    document.getElementById('discount-form').addEventListener('submit', function (event) {
-        event.preventDefault(); // Mencegah form dikirim langsung
+        document.getElementById('discount-form').addEventListener('submit', function (event) {
+            event.preventDefault();
 
-        const hargaInput = document.getElementById('harga');
-        const diskonInput = document.getElementById('diskon');
+            const hargaInput = document.getElementById('harga');
+            const diskonInput = document.getElementById('diskon');
+            const hargaValue = hargaInput.value.trim();
+            const diskonValue = diskonInput.value.trim();
+            const resultContainer = document.getElementById('result-container');
+            resultContainer.innerHTML = '';
 
-        const hargaValue = hargaInput.value.trim();
-        const diskonValue = diskonInput.value.trim();
+            // Validasi input kosong
+            if (hargaValue === '') {
+                resultContainer.innerHTML = "<div class='alert' role='alert'>Harap masukkan harga!</div>";
+                hargaInput.focus();
+                return;
+            }
 
-        const harga = parseFloat(hargaValue);
-        const diskon = parseFloat(diskonValue);
-        const resultContainer = document.getElementById('result-container');
+            if (diskonValue === '') {
+                resultContainer.innerHTML = "<div class='alert' role='alert'>Harap masukkan diskon!</div>";
+                diskonInput.focus();
+                return;
+            }
 
-        resultContainer.innerHTML = ''; // Reset hasil sebelumnya
+            const harga = parseFloat(hargaValue);
+            const diskon = parseFloat(diskonValue);
 
-        // Validasi jika input kosong
-        if (hargaValue === '') {
-            resultContainer.innerHTML = "<div class='alert' role='alert'>Harap masukkan harga!</div>";
-            hargaInput.focus();
-            return;
-        }
+            // Validasi angka
+            if (isNaN(harga) || harga < 1) {
+                resultContainer.innerHTML = "<div class='alert' role='alert'>Harga tidak boleh kurang dari 1</div>";
+                hargaInput.focus();
+                return;
+            }
 
-        if (diskonValue === '') {
-            resultContainer.innerHTML = "<div class='alert' role='alert'>Harap masukkan diskon!</div>";
-            diskonInput.focus();
-            return;
-        }
+            if (isNaN(diskon) || diskon < 1 || diskon > 100) {
+                resultContainer.innerHTML = "<div class='alert' role='alert'>Diskon harus dari 1% sampai 100%</div>";
+                diskonInput.focus();
+                return;
+            }
 
-        // Validasi jika harga tidak valid
-        if (isNaN(harga) || harga < 1) {
-            resultContainer.innerHTML = "<div class='alert' role='alert'>Harga tidak boleh kurang dari 1</div>";
-            hargaInput.focus();
-            return;
-        }
+            // Hitung diskon
+            const nilaiDiskon = harga * (diskon / 100);
+            const totalHarga = harga - nilaiDiskon;
 
-        // Validasi jika diskon tidak valid
-        if (isNaN(diskon) || diskon < 1 || diskon > 100) {
-            resultContainer.innerHTML = "<div class='alert' role='alert'>Diskon harus dari 1% sampai 100%</div>";
-            diskonInput.focus();
-            return;
-        }
-
-        // Hitung nilai diskon dan total harga
-        const nilaiDiskon = harga * (diskon / 100);
-        const totalHarga = harga - nilaiDiskon;
-
-        // Tampilkan hasil perhitungan
-        resultContainer.innerHTML = `
-            <div class="result-box">
-                <p>Harga Barang : Rp. <b>${harga.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}</b></p>
-                <p>Diskon ${diskon}% : Rp. <b>${nilaiDiskon.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}</b></p>
-                <p>Harga Setelah Diskon : Rp. <b>${totalHarga.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}</b></p>
-            </div>
-        `;
-    });
-</script>
+            resultContainer.innerHTML = `
+                <div class="result-box">
+                    <p>Harga Barang : <b>${harga.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}</b></p>
+                    <p>Diskon ${diskon}% : <b>${nilaiDiskon.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}</b></p>
+                    <p>Harga Setelah Diskon : <b>${totalHarga.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}</b></p>
+                </div>
+            `;
+        });
+    </script>
 </body>
 
 </html>

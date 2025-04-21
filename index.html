@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perhitungan Diskon - Aril</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000000;
+            /* Latar belakang hitam */
+            color: #ffffff;
+            /* Teks putih */
+        }
+
+        h2 {
+            color: #007BFF;
+            /* Teks biru cerah */
+        }
+
+        .form-control {
+            border-radius: 5px;
+            border: 1px solid #007BFF;
+            /* Border biru */
+        }
+
+        .form-control:focus {
+            border-color: #0056b3;
+            /* Border biru tua saat fokus */
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+            /* Efek fokus */
+        }
+
+        .btn-primary {
+            background-color: #007BFF;
+            /* Latar belakang tombol biru */
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            /* Latar belakang tombol biru tua saat hover */
+        }
+
+        .alert {
+            background-color: #dc3545;
+            /* Latar belakang merah untuk alert */
+            color: white;
+            /* Teks putih untuk alert */
+            border-radius: 5px;
+        }
+
+        .result-box {
+            background-color: #1c1c1c;
+            /* Latar belakang hasil */
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+
+        footer {
+            color: #007BFF;
+            /* Teks biru cerah di footer */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <h2 class="text-center">Perhitungan Diskon</h2>
+                <form id="discount-form" class="border rounded bg-dark p-4">
+                    <label class="form-label">Harga Barang (Rp)</label>
+                    <input type="number" id="harga" class="form-control" step="0.01" placeholder="Masukan Harga Barang" autocomplete="off" min="0" required>
+                    <label class="form-label">Diskon (%)</label>
+                    <input type="text" id="diskon" maxlength="3" class="form-control" step="0.01" placeholder="Masukan Diskon (1%-100%)" autocomplete="off" min="0" required>
+
+                    <button type="submit" class="btn btn-primary w-100 mt-2">Hitung Harga Barang Setelah Diskon</button>
+                </form>
+
+                <div id="result-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center mt-4">
+        <p>&copy; Perhitungan Diskon | Aril | 12 RPL-A</p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.getElementById('discount-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const harga = parseFloat(document.getElementById('harga').value);
+            const diskon = parseFloat(document.getElementById('diskon').value);
+            const resultContainer = document.getElementById('result-container');
+
+            resultContainer.innerHTML = ''; // Reset previous result
+
+            if (isNaN(harga) || harga < 1) {
+                resultContainer.innerHTML = "<div class='alert' role='alert'>Harga tidak boleh kurang dari 1</div>";
+                return;
+            }
+
+            if (isNaN(diskon) || diskon < 1 || diskon > 100) {
+                resultContainer.innerHTML = "<div class='alert' role='alert'>Diskon Harus dari 1%-100%</div>";
+                return;
+            }
+
+            const nilaiDiskon = harga * (diskon / 100);
+            const totalHarga = harga - nilaiDiskon;
+
+            resultContainer.innerHTML = `
+                <div class="result-box">
+                    <p>Harga Barang : Rp. <b>${harga.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}</b></p>
+                    <p>Diskon ${diskon}% : Rp. <b>${nilaiDiskon.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}</b></p>
+                    <p>Harga Barang Setelah Diskon : Rp. <b>${totalHarga.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}</b></p>
+                </div>
+            `;
+        });
+    </script>
+</body>
+
+</html>
